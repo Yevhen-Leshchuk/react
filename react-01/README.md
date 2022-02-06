@@ -1,5 +1,3 @@
-# react-21-22
-
 - Зачем нужны JS-фреймворки?
 - [Концепция Virtual DOM](https://illustrated.dev/react-vdom)
 - [create-react-app](https://create-react-app.dev/)
