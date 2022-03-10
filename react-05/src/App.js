@@ -9,6 +9,12 @@ import TodoEditor from './components/TodoEditor';
 import Filter from './components/Filter';
 import initialTodos from './todos.json';
 // import Form from './components/Form';
+import Modal from './components/Modal';
+// import Clock from './components/Clock';
+// import Tabs from './components/Tabs';
+// import tabs from './tabs.json';
+import IconButton from './components/IconButton/IconButton';
+import { ReactComponent as AddIcon } from './icons/add.svg';
 import './index.css';
 
 /*
@@ -39,9 +45,35 @@ import './index.css';
 
 class App extends Component {
   state = {
-    todos: initialTodos,
+    // todos: initialTodos,
+    todos: [],
     filter: '',
+    showModal: false,
   };
+
+  componentDidMount() {
+    // console.log('App componentDidMount');
+
+    const todos = localStorage.getItem('todos');
+    const parsedTodos = JSON.parse(todos);
+
+    if (parsedTodos) this.setState({ todos: parsedTodos });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // console.log('App componentDidUpdate');
+    const nextTodos = this.state.todos;
+    const prevTodos = prevState.todos;
+
+    if (nextTodos !== prevTodos)
+      // console.log('Обновилось поле todos, записываю todos в localStorage');
+
+      localStorage.setItem('todos', JSON.stringify(nextTodos));
+
+    if (nextTodos.length > prevTodos.length && prevTodos.length !== 0) {
+      this.toggleModal(); // закрытие модалки после добавления todo
+    }
+  }
 
   addTodo = text => {
     // console.log(text);
@@ -53,6 +85,8 @@ class App extends Component {
     };
 
     this.setState(({ todos }) => ({ todos: [todo, ...todos] }));
+
+    // this.toggleModal(); закрытие модалки после добавления todo
   };
 
   deleteTodo = todoId => {
@@ -122,16 +156,15 @@ class App extends Component {
   // formSubmitHandler = data => {
   //   console.log(data);
   // };
-  componentDidMount() {
-    console.log('App componentDidMount');
-  }
 
-  componentDidUpdate() {
-    console.log('App componentDidUpdate');
-  }
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
 
   render() {
-    const { todos, filter } = this.state;
+    const { todos, filter, showModal } = this.state;
 
     const totalTodoCount = todos.length;
     const completedTodoCount = this.calculateCompletedTodos();
@@ -139,21 +172,37 @@ class App extends Component {
 
     return (
       <Container>
+        {/* <Tabs items={tabs} /> */}
+        {/* <Clock /> */}
+        <IconButton onClick={this.toggleModal} aria-label="Add todo">
+          <AddIcon width="40" height="40" fill="#fff" />
+        </IconButton>
+        {/* <button type="button" onClick={this.toggleModal}>
+          Open modal
+        </button> */}
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <TodoEditor onSubmit={this.addTodo} />
+            {/* <button type="button" onClick={this.toggleModal}>
+              Close modal
+            </button> */}
+          </Modal>
+        )}
+
         <div className="TodoBox">
           <p>Общее кол-во: {totalTodoCount}</p>
           <p>Кол-во выполненных: {completedTodoCount}</p>
         </div>
         <Filter value={filter} onChange={this.changeFilter} />
-        <TodoEditor onSubmit={this.addTodo} />
-        {/* <Form onSubmit={this.formSubmitHandler} /> */}
-        {/* <Dropdown /> */}
-        {/* <Counter initialValue={12} /> */}
-        {/* <ColorPicker options={colorPickerOptions} /> */}
         <TodoList
           todos={visibleTodos}
           onDeleteTodo={this.deleteTodo}
           onToggleCompleted={this.toggleCompleted}
         />
+        {/* <Form onSubmit={this.formSubmitHandler} /> */}
+        {/* <Dropdown /> */}
+        {/* <Counter initialValue={12} /> */}
+        {/* <ColorPicker options={colorPickerOptions} /> */}
       </Container>
     );
   }
