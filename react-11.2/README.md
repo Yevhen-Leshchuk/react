@@ -1,5 +1,3 @@
-# react-18
-
 - Основные концепции: store, state, actions, action creators, reducers
 - Feature based структура файлов и папок
   - Создаём и настраиваем хранилище (store)
