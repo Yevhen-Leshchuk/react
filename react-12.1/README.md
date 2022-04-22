@@ -1,5 +1,3 @@
-# react-18
-
 - Разбираем [Redux Toolkit](https://redux-toolkit.js.org/) и рефакторим код
   предыдущего занятия
 - configureStore()
